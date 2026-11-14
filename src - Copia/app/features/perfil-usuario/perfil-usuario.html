@@ -1,0 +1,74 @@
+<div class="perfil-container">
+  <header class="perfil-header">
+    <a routerLink="/" class="logo">AROMA CAFÉ</a>
+    <button type="button" (click)="iniciarEdicao()">Editar perfil</button>
+  </header>
+
+  <main class="perfil-conteudo">
+   <section class="perfil-card">
+      <div class="avatar">
+        {{ usuario.avatar }}
+      </div>
+
+      <h1>{{ usuario.nome }}</h1>
+      <p>{{ usuario.email }}</p>
+      <p>{{ usuario.dataNascimento | date:'dd/MM/yyyy' }}</p>
+      <p><strong>Endereço:</strong> {{ usuario.endereco || 'Não informado' }}</p>
+
+      <div *ngIf="!editando" class="dados">
+        <h2>Meus dados</h2>
+
+        <p><strong>Nome:</strong> {{ usuario.nome }}</p>
+        <p><strong>E-mail:</strong> {{ usuario.email }}</p>
+        <p><strong>Nascimento:</strong> {{ usuario.dataNascimento | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Endereço:</strong> {{ usuario.endereco || 'Não informado' }}</p>
+      </div>
+
+      <form *ngIf="editando" (ngSubmit)="salvarEdicao()" class="formulario">
+        <h2>Editar meu perfil</h2>
+
+        <label>Nome</label>
+        <input name="nome" [(ngModel)]="usuario.nome" required />
+
+        <label>E-mail</label>
+        <input name="email" type="email" [(ngModel)]="usuario.email" required />
+
+        <label>Data de nascimento</label>
+        <input name="dataNascimento" type="date" [(ngModel)]="usuario.dataNascimento" required />
+
+        <label>Endereço</label>
+        <input name="endereco" [(ngModel)]="usuario.endereco" required />
+
+        <label>Escolha seu avatar</label>
+
+        <div class="avatares">
+          <button
+            type="button"
+            *ngFor="let avatar of avatares"
+            [class.selecionado]="usuario.avatar === avatar"
+            (click)="usuario.avatar = avatar"
+          >
+            {{ avatar }}
+          </button>
+        </div>
+
+        <div class="acoes">
+          <button type="submit">Salvar alterações</button>
+          <button type="button" (click)="cancelarEdicao()">Cancelar</button>
+        </div>
+      </form>
+
+      <p class="mensagem" *ngIf="mensagem">{{ mensagem }}</p>
+    </section>
+
+    <section class="perfil-card">
+      <h2>Histórico de pagamentos</h2>
+      <p>Seus pagamentos realizados aparecerão aqui.</p>
+    </section>
+
+    <section class="perfil-card">
+      <h2>Meus cartões</h2>
+      <p>Consulte seus cartões cadastrados durante as compras.</p>
+    </section>
+  </main>
+</div>

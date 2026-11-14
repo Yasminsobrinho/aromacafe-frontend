@@ -1,6 +1,7 @@
 import { afterNextRender, Component, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CepService } from '../../../core/services/cep.service';
@@ -14,7 +15,7 @@ const GOOGLE_CLIENT_ID = '435610855054-206eq6gcl6hosetb0ecfvem0kpp6mgtr.apps.goo
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -253,6 +254,20 @@ export class Login {
       return;
     }
 
+    // Ainda não existe backend: o cadastro guarda os dados neste navegador (localStorage).
+    // Quando tiverem a API, é aqui que entra o POST de criação de usuário.
+    const complemento = this.complemento.trim() ? ` - ${this.complemento.trim()}` : '';
+    const endereco =
+      `${this.rua.trim()}, ${this.numero.trim()}${complemento} - ` +
+      `${this.bairro.trim()}, ${this.cidade.trim()} - ${this.uf.trim()}`;
+
+    const sucesso = this.auth.cadastrar({
+      nome: this.nome,
+      email: this.email,
+      senha: this.senha,
+      nascimento: this.nascimento,
+      endereco,
+    });
     // Ainda não existe backend nem método de cadastro no AuthService (que é compartilhado
     // com o grupo), então por enquanto o cadastro reaproveita o login mock: a pessoa já fica logada.
     // Os outros dados (nome, nascimento e endereço) são validados acima, mas ainda não são salvos.
@@ -323,6 +338,10 @@ export class Login {
 
   sair(): void {
     this.auth.logout();
+  }
+
+  irParaPerfil(): void {
+    this.router.navigateByUrl('/usuario');
   }
 
   private irParaOndeEstava(): void {

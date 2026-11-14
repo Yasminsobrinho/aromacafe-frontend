@@ -7,12 +7,17 @@ import { AVATARES, AvatarService, Perfil, ToastService } from './services';
   template: `
     <div class="pick">
       @for (a of avatares; track a.key) {
-        <button type="button" [attr.aria-pressed]="av.escolhido[perfil()]() === a.key" (click)="escolher(a.key)">
-          <img alt="" [src]="av.src(a.key)">
+        <button
+          type="button"
+          [attr.aria-pressed]="!av.customizado[perfil()]() && av.escolhido[perfil()]() === a.key"
+          (click)="escolher(a.key)"
+        >
+          <img alt="" [src]="av.src(a.key)" />
           <span>{{ a.nome }}</span>
         </button>
       }
-    </div>`,
+    </div>
+  `,
 })
 export class AvatarPickerComponent {
   perfil = input.required<Perfil>();
@@ -22,6 +27,6 @@ export class AvatarPickerComponent {
 
   escolher(key: string) {
     this.av.definir(this.perfil(), key);
-    this.toast.show('Avatar atualizado');
+    this.toast.show('Avatar atualizado!');
   }
 }

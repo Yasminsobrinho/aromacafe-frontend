@@ -26,6 +26,8 @@
           <p>{{ auth.usuarioLogado()?.email }}</p>
         </div>
 
+        <button type="button" class="btn-login" (click)="irParaPerfil()">Ir para meu perfil</button>
+        <button type="button" class="btn-login btn-login-alt" (click)="sair()">Sair</button>
         <button type="button" class="btn-login" (click)="sair()">Sair</button>
       </div>
 
@@ -103,6 +105,202 @@
             Ao clicar em "Entrar", você declara estar de acordo com os Termos de Uso e a Política
             de Privacidade do site.
           </p>
+
+          <button type="submit" class="btn-login">Entrar</button>
+
+          <!-- Acesso separado para a equipe administrativa -->
+          <a class="link-admin" routerLink="/admin-login">
+            Área do administrador
+          </a>
+        </form>
+
+        <!-- CADASTRO -->
+        <form *ngIf="modo === 'cadastrar'" (ngSubmit)="cadastrar()" novalidate>
+
+          <div class="secao-header">
+            <h3>Dados pessoais</h3>
+            <p>Como você vai entrar na sua conta</p>
+          </div>
+
+          <div class="input-group">
+            <label for="nome">Nome completo</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              autocomplete="name"
+              [(ngModel)]="nome"
+              placeholder="Digite seu nome"
+            />
+            <p class="erro-login" *ngIf="erroNome">{{ erroNome }}</p>
+          </div>
+
+          <div class="input-group">
+            <label for="nascimento">Data de nascimento</label>
+            <input
+              type="date"
+              id="nascimento"
+              name="nascimento"
+              autocomplete="bday"
+              [max]="hoje"
+              [(ngModel)]="nascimento"
+            />
+            <p class="erro-login" *ngIf="erroNascimento">{{ erroNascimento }}</p>
+          </div>
+
+          <div class="input-group">
+            <label for="email-cadastro">E-mail</label>
+            <input
+              type="email"
+              id="email-cadastro"
+              name="email"
+              autocomplete="email"
+              [(ngModel)]="email"
+              placeholder="Digite seu e-mail"
+            />
+            <p class="erro-login" *ngIf="erroEmail">{{ erroEmail }}</p>
+          </div>
+
+          <div class="campos-linha">
+            <div class="input-group">
+              <label for="senha-cadastro">Senha</label>
+              <input
+                type="password"
+                id="senha-cadastro"
+                name="senha"
+                autocomplete="new-password"
+                [(ngModel)]="senha"
+                placeholder="Mínimo 6 caracteres"
+              />
+              <p class="erro-login" *ngIf="erroSenha">{{ erroSenha }}</p>
+            </div>
+
+            <div class="input-group">
+              <label for="confirmar-senha">Confirmar senha</label>
+              <input
+                type="password"
+                id="confirmar-senha"
+                name="confirmarSenha"
+                autocomplete="new-password"
+                [(ngModel)]="confirmarSenha"
+                placeholder="Repita a senha"
+              />
+              <p class="erro-login" *ngIf="erroConfirmar">{{ erroConfirmar }}</p>
+            </div>
+          </div>
+
+          <div class="secao-header">
+            <h3>Endereço</h3>
+            <p>Digite o CEP e a gente preenche o resto</p>
+          </div>
+
+          <div class="input-group">
+            <label for="cep">CEP</label>
+            <input
+              type="text"
+              id="cep"
+              name="cep"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              maxlength="9"
+              [ngModel]="cep"
+              (ngModelChange)="aoMudarCep($event)"
+              placeholder="00000-000"
+            />
+            <p class="erro-login" *ngIf="erroCep">{{ erroCep }}</p>
+          </div>
+
+          <div class="input-group">
+            <label for="rua">Rua</label>
+            <input
+              type="text"
+              id="rua"
+              name="rua"
+              autocomplete="address-line1"
+              [(ngModel)]="rua"
+              [placeholder]="buscandoCep ? 'Buscando endereço…' : 'Nome da rua'"
+            />
+            <p class="erro-login" *ngIf="erroRua">{{ erroRua }}</p>
+          </div>
+
+          <div class="campos-linha">
+            <div class="input-group">
+              <label for="numero">Número</label>
+              <input
+                type="text"
+                id="numero"
+                name="numero"
+                [(ngModel)]="numero"
+                placeholder="Ex.: 120"
+              />
+              <p class="erro-login" *ngIf="erroNumero">{{ erroNumero }}</p>
+            </div>
+
+            <div class="input-group">
+              <label for="complemento">Complemento</label>
+              <input
+                type="text"
+                id="complemento"
+                name="complemento"
+                autocomplete="address-line2"
+                [(ngModel)]="complemento"
+                placeholder="Apto, bloco (opcional)"
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="bairro">Bairro</label>
+            <input
+              type="text"
+              id="bairro"
+              name="bairro"
+              [(ngModel)]="bairro"
+              placeholder="Digite o bairro"
+            />
+            <p class="erro-login" *ngIf="erroBairro">{{ erroBairro }}</p>
+          </div>
+
+          <div class="campos-linha campos-linha-cidade">
+            <div class="input-group">
+              <label for="cidade">Cidade</label>
+              <input
+                type="text"
+                id="cidade"
+                name="cidade"
+                autocomplete="address-level2"
+                [(ngModel)]="cidade"
+                placeholder="Digite a cidade"
+              />
+              <p class="erro-login" *ngIf="erroCidade">{{ erroCidade }}</p>
+            </div>
+
+            <div class="input-group">
+              <label for="uf">Estado</label>
+              <input
+                type="text"
+                id="uf"
+                name="uf"
+                class="campo-uf"
+                maxlength="2"
+                autocomplete="address-level1"
+                [ngModel]="uf"
+                (ngModelChange)="uf = ($event || '').toUpperCase()"
+                placeholder="UF"
+              />
+              <p class="erro-login" *ngIf="erroUf">{{ erroUf }}</p>
+            </div>
+          </div>
+
+          <label class="aceite">
+            <input type="checkbox" name="aceite" [(ngModel)]="aceite" />
+            <span>Li e aceito os Termos de Uso e a Política de Privacidade do site.</span>
+          </label>
+          <p class="erro-login" *ngIf="erroAceite">{{ erroAceite }}</p>
+
+          <button type="submit" class="btn-login">Criar conta</button>
+        </form>
+
 
           <button type="submit" class="btn-login">Entrar</button>
         </form>

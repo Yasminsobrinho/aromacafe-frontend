@@ -190,3 +190,128 @@ main {
     margin-block: 1.5rem;
   }
 }
+.perfil-container {
+  min-height: 100vh;
+  background: #140b06;
+  color: #f3e9db;
+  padding-bottom: 40px;
+}
+
+.perfil-header {
+  background: #0e0704;
+  padding: 22px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: #dcb783;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.perfil-header button,
+.acoes button {
+  background: #c9a06a;
+  color: #140b06;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.perfil-conteudo {
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.perfil-card {
+  background: #1f120b;
+  border: 1px solid #5a3320;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 22px;
+}
+
+.avatar {
+  font-size: 55px;
+  background: #d7c3a3;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+h1, h2 {
+  color: #dcb783;
+}
+
+.dados p {
+  margin: 15px 0;
+}
+
+.formulario label {
+  display: block;
+  margin-top: 15px;
+}
+
+.formulario input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-top: 6px;
+  background: #140b06;
+  color: #f3e9db;
+  border: 1px solid #c9a06a;
+  border-radius: 8px;
+}
+
+.avatares {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.avatares button {
+  font-size: 25px;
+  padding: 10px;
+  background: #d7c3a3;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.avatares button.selecionado {
+  border-color: #c9a06a;
+}
+
+.acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.mensagem {
+  color: #dcb783;
+  margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+  .perfil-header {
+    padding: 18px;
+  }
+
+  .perfil-card {
+    padding: 20px;
+  }
+
+  .acoes {
+    flex-direction: column;
+  }
+}
