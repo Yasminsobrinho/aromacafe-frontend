@@ -11,6 +11,7 @@ import { Stat, StatsBandComponent } from './stats-band.component';
   selector: 'app-user-profile',
   standalone: true,
   imports: [FormsModule, RouterLink, AvatarPickerComponent, AvatarViewComponent, StatsBandComponent],
+  imports: [ProfileHeroComponent, StatsBandComponent, AvatarPickerComponent],
   host: { class: 'profile-page view' },
   template: `
     <section class="card hero">

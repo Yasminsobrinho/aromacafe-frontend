@@ -2,6 +2,7 @@ import { afterNextRender, Component, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CepService } from '../../../core/services/cep.service';
 
@@ -267,6 +268,11 @@ export class Login {
       nascimento: this.nascimento,
       endereco,
     });
+    // Ainda não existe backend nem método de cadastro no AuthService (que é compartilhado
+    // com o grupo), então por enquanto o cadastro reaproveita o login mock: a pessoa já fica logada.
+    // Os outros dados (nome, nascimento e endereço) são validados acima, mas ainda não são salvos.
+    // Quando tiverem a API, é aqui que entra o POST de criação de usuário.
+    const sucesso = this.auth.login(this.email, this.senha);
 
     if (!sucesso) {
       this.erroEmail = 'Não foi possível criar a conta. Tente novamente.';

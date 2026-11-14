@@ -95,6 +95,8 @@ export class AuthService {
     };
   }
 
+  }
+
   // Salva o usuário no localStorage e atualiza o signal
   private salvarUsuario(usuario: Usuario): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -186,6 +188,15 @@ export class AuthService {
     this.salvarUsuario(usuario);
 
     return true;
+        provedor: 'email'
+      };
+
+      this.salvarUsuario(usuario);
+
+      return true;
+    }
+
+    return false;
   }
 
   // Login com Google
@@ -214,6 +225,14 @@ export class AuthService {
       };
 
       this.salvarUsuario(this.comPerfilSalvo(usuario));
+      const usuario: Usuario = {
+        nome: payload.name ?? payload.email.split('@')[0],
+        email: payload.email,
+        foto: payload.picture,
+        provedor: 'google'
+      };
+
+      this.salvarUsuario(usuario);
 
       return true;
     } catch {
@@ -240,6 +259,14 @@ export class AuthService {
         return false;
       }
 
+      }
+
+      const payload = this.decodificarToken(idToken);
+
+      if (!payload.email) {
+        return false;
+      }
+
       const usuario: Usuario = {
         nome:
           nomeRecebido ||
@@ -252,6 +279,10 @@ export class AuthService {
       };
 
       this.salvarUsuario(this.comPerfilSalvo(usuario));
+        provedor: 'apple'
+      };
+
+      this.salvarUsuario(usuario);
 
       return true;
     } catch {

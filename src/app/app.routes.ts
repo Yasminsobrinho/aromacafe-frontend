@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard } from './core/auth.guard';
+import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -80,3 +81,12 @@ export const routes: Routes = [
 
 ]
 
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/perfil-usuario/admin-profile.component').then((m) => m.AdminProfileComponent),
+    title: 'Perfil do administrador',
+  },
+  { path: '**', redirectTo: 'home' },
+];
