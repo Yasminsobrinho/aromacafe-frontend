@@ -1,0 +1,540 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap');
+
+body {
+  background: #0e0704;
+}
+
+/* =========================
+   container geral (tudo dentro dele)
+   ========================= */
+
+.carrinho-container {
+  --altura-menu: 92px;            /* altura da barra de navegação: ajuste se precisar */
+
+  margin: 0;
+  box-sizing: border-box;
+  background: #0e0704;
+  padding: 40px 24px 60px;
+}
+
+/* =========================
+   background do carrinho vazio
+   ========================= */
+
+.carrinho-container.vazio-fundo {
+  background: radial-gradient(circle at 50% 14%, #2a1710 0, #0e0704 45%);
+  min-height: calc(100vh - var(--altura-menu));   /* cobre a tela toda */
+}
+
+/* =========================
+   cabeçalho e conteúdo:
+   mesma largura máxima, centralizados
+   ========================= */
+
+.carrinho-header,
+.carrinho-conteudo {
+  max-width: 1550px;              /* aumente ou diminua para mudar a largura do conjunto */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.carrinho-header {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+/* revise seu pedido */
+.carrinho-header span {
+  display: inline-block;
+  color: #c9a06a;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  font-family: 'Jost', sans-serif;
+}
+
+/* meu carrinho */
+.carrinho-header h1 {
+  margin: 0;
+  font-size: 60px;
+  color: #e9dbc5;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* =========================
+   container principal (main): lista + resumo
+   ========================= */
+
+.carrinho-conteudo {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  align-items: flex-start;        /* o resumo não estica até o fim */
+}
+
+/* =========================
+   lista de produtos
+   ========================= */
+
+.produtos-carrinho {
+  flex: 1;                        /* ocupa o espaço que sobra */
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* =========================
+   produto
+   ========================= */
+
+.produto-carrinho {
+  border-top: 1px solid #765c4c75;
+  border-bottom: 1px solid #765c4c75;
+  padding: 15px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.produto-info {
+  flex: 1;
+  min-width: 0;
+  color: #e9dbc5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+/* foto sempre quadrada, sem encolher */
+.produto-info img {
+  flex: none;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* preço unitário */
+.produto-info span {
+  font-family: 'Jost', sans-serif;
+  font-size: 15px;
+}
+
+/* nome do produto */
+.produto-info h3 {
+  font-size: 26px;
+  margin: 0;
+}
+
+/* descrição do produto */
+.produto-info p {
+  font-size: 16px;
+  font-family: 'Jost', sans-serif;
+}
+
+.produto-card {
+  flex: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+/* preço total do produto: não quebra e alinha à direita */
+#total {
+  width: 100px;
+  text-align: right;
+  white-space: nowrap;
+  color: #c9a06a;
+  font-family: 'Jost', sans-serif;
+  font-size: 20px;
+}
+
+/* =========================
+   botão de quantidade
+   ========================= */
+
+.quantidade {
+  box-sizing: border-box;
+  width: 120px;                   /* largura fixa: colunas alinhadas entre as linhas */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 10px;
+  color: #e9dbc5;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.quantidade button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e9dbc5;
+  border-radius: 50%;
+  background: #0e0704;
+  font-size: 18px;
+  color: #e9dbc5;
+  cursor: pointer;
+}
+
+/* hover só quando o botão está ativo */
+.quantidade button:hover:not(:disabled) {
+  background: #e9dbc5;
+  color: #0e0704;
+}
+
+/* botão desativado: apagado e sem reação */
+.quantidade button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* número da quantidade */
+.quantidade span {
+  min-width: 25px;
+  text-align: center;
+  font-family: 'Jost', sans-serif;
+  font-size: 19px;
+}
+
+/* =========================
+   lixeira + balão
+   ========================= */
+
+.remover-wrapper {
+  position: relative;             /* o balão se posiciona em relação a ela */
+  flex: none;
+}
+
+.remover {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: #2a1710;
+  color: #d0806f;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* hover e também quando o balão está aberto */
+.remover:hover,
+.remover.ativo {
+  background: #d0806f;
+  color: #130c09;
+}
+
+/* =========================
+   balão de confirmação
+   ========================= */
+
+.confirmar-remocao {
+  position: absolute;
+  top: calc(100% + 12px);         /* logo abaixo da lixeira */
+  right: 0;
+  z-index: 10;                    /* fica por cima das linhas de baixo */
+  width: min(300px, 80vw);
+  box-sizing: border-box;
+  padding: 18px;
+  background: #1d130e;
+  border: 1px solid #6b4a38;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  text-align: left;
+  animation: balao-entrada 0.15s ease-out;
+}
+
+/* setinha apontando para a lixeira */
+.confirmar-remocao::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 15px;
+  width: 12px;
+  height: 12px;
+  background: #1d130e;
+  border-left: 1px solid #6b4a38;
+  border-top: 1px solid #6b4a38;
+  transform: rotate(45deg);
+}
+
+.confirmar-remocao h4 {
+  margin: 0 0 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #e9dbc5;
+}
+
+.confirmar-remocao p {
+  margin: 0 0 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  color: #b8a58f;
+}
+
+.confirmar-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmar-botoes button {
+  flex: 1;
+  height: 40px;
+  border-radius: 999px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-cancelar {
+  border: 1px solid #6b4a38;
+  background: transparent;
+  color: #e9dbc5;
+}
+.btn-cancelar:hover { border-color: #c9a06a; color: #c9a06a; }
+
+.btn-confirmar {
+  border: 0;
+  background: #d0806f;
+  color: #130c09;
+  font-weight: 500;
+}
+.btn-confirmar:hover { background: #e09a8a; }
+
+/* entrada suave */
+@keyframes balao-entrada {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   resumo do pedido (cartão bege)
+   ========================= */
+
+.resumo-pedido {
+  /* --- acompanha a rolagem, abaixo da barra de navegação --- */
+  position: sticky;
+  top: calc(var(--altura-menu) + 24px);
+  align-self: flex-start;
+  max-height: calc(100vh - var(--altura-menu) - 48px);
+  overflow-y: auto;
+
+  /* --- visual --- */
+  flex: 0 0 380px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+  background: #efe4d0;
+  color: #3b1d0e;
+  border-radius: 20px;
+  font-family: 'Jost', sans-serif;
+}
+
+.resumo-pedido h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+/* =========================
+   cupom
+   ========================= */
+
+.cupom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.aviso-cupons {
+  background: #f3e9db;
+  border: 1px solid #d8c7ad;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.aviso-cupons-titulo {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.aviso-cupons p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b4a38;
+}
+
+.aviso-cupons strong { color: #8a5a2b; }
+
+.cupom label {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b4a38;
+}
+
+.cupom-input {
+  display: flex;
+  gap: 8px;
+}
+
+.cupom-input input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid #d8c7ad;
+  border-radius: 999px;
+  background: #fbf6ee;
+  color: #3b1d0e;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.cupom-input input:focus {
+  outline: 2px solid #8a5a2b;
+  outline-offset: 1px;
+}
+
+.cupom-input button {
+  height: 46px;
+  padding: 0 22px;
+  border: 1px solid #8a5a2b;
+  border-radius: 999px;
+  background: transparent;
+  color: #8a5a2b;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cupom-input button:hover {
+  background: #8a5a2b;
+  color: #fbf6ee;
+}
+
+/* mensagem depois de aplicar o cupom */
+.mensagem-cupom {
+  margin: 0;
+  font-size: 14px;
+  color: #3d6b3a;                 /* cupom válido */
+}
+.mensagem-cupom.erro { color: #a5432f; }   /* cupom inválido */
+
+/* =========================
+   valores
+   ========================= */
+
+.resumo-valores {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.linha-resumo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+.linha-resumo.desconto { color: #8a5a2b; }
+
+.resumo-valores hr {
+  width: 100%;
+  margin: 4px 0 0;
+  border: 0;
+  border-top: 1px solid #d8c7ad;
+}
+
+/* a linha inteira: "Total" na esquerda, valor na direita */
+.resumo-pedido .linha-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  gap: 16px;
+}
+
+/* a palavra "Total" */
+.resumo-pedido .total-rotulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #3b1d0e;
+}
+
+/* o valor */
+.resumo-pedido .total-valor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  font-weight: 500;
+  color: #8a5a2b;
+  white-space: nowrap;
+}
+
+/* =========================
+   botão finalizar
+   ========================= */
+
+.finalizar {
+  height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: #2b1810;
+  color: #f3e9db;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.finalizar:hover:not(:disabled) { background: #4a2c1c; }
+
+.finalizar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =========================
+   telas menores: empilha lista e resumo
+   ========================= */
+
+@media (max-width: 900px) {
+  .carrinho-conteudo { flex-direction: column; }
+
+  .resumo-pedido {
+    position: static;             /* desliga o "grudado" */
+    flex: none;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .produto-carrinho {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .produto-card {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth.guard';
-import { UserProfileComponent } from '../app/features/perfil-usuario/user-profile.component';
-import { AdminProfileComponent } from '../app/features/perfil-usuario/admin-profile.component';
+import { adminGuard, authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
   {
     path: 'home',
     loadComponent: () => import('./features/home/home/home').then((m) => m.Home),
@@ -17,7 +16,6 @@ export const routes: Routes = [
   {
     path: 'carrinho',
     loadComponent: () => import('./features/carrinho/carrinho/carrinho').then((m) => m.Carrinho),
-    canActivate: [authGuard], // bloqueia acesso sem login
   },
 
   {
@@ -55,27 +53,30 @@ export const routes: Routes = [
   },
 
   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
+    path: 'avaliacoes',
+    loadComponent: () =>
+      import('./features/home/home/pginicial/avaliacoes/avaliacoes').then((m) => m.Avaliacoes),
   },
-
-  {
-    path: '**',
-    redirectTo: 'home',
-  },
-  { path: '', pathMatch: 'full', redirectTo: 'usuario' },
-
-  { path: 'usuario', component: UserProfileComponent, title: 'Perfil do usuário' },
-
-  { path: 'admin', component: AdminProfileComponent, title: 'Perfil do administrador' },
-
-  { path: '**', redirectTo: 'usuario' },
-
   {
     path: 'usuario',
     loadComponent: () => import('./features/perfil-usuario/user-profile.component').then((m) => m.UserProfileComponent),
+    title: 'Perfil do usuário',
   },
+{
+  path: 'admin-login',
+  loadComponent: () =>
+    import('./features/perfil-usuario/admin-login.component')
+      .then((m) => m.AdminLoginComponent),
+  title: 'Login do administrador',
+},
+{
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/perfil-usuario/admin-profile.component').then((m) => m.AdminProfileComponent),
+    canActivate: [adminGuard],
+    title: 'Perfil do administrador',
+  },
+  { path: '**', redirectTo: 'home' }
 
+]
 
-];

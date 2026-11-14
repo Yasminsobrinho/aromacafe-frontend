@@ -1,429 +1,315 @@
-// =========================================================
-// IMPORTS
-// =========================================================
 
-// Importa o Component.
-// Ele permite criar um componente Angular.
 import { Component } from '@angular/core';
-
-// Importa recursos básicos do Angular,
-// como o *ngIf e o *ngFor.
 import { CommonModule } from '@angular/common';
-
-// Importa o FormsModule.
-// Ele permite usar [(ngModel)] nos inputs.
-// Assim conseguimos pegar o que o usuário digita.
 import { FormsModule } from '@angular/forms';
-
-// Importa o RouterLink.
-// Ele permite fazer navegação entre as páginas.
 import { RouterLink } from '@angular/router';
 
-// Importamos o CarrinhoService.
-// Ele é responsável por guardar e controlar
-// os produtos do carrinho.
-import { CarrinhoService, ProdutoCarrinho } from '../carrinho/carrinho/carrinho.service';
+import {
+  CarrinhoService,
+  ProdutoCarrinho
+} from '../carrinho/carrinho/carrinho.service';
 
 import { CepService } from '../../core/services/cep.service';
 
-// =========================================================
-// COMPONENTE
-// =========================================================
-
 @Component({
-  // Nome usado para identificar o componente.
   selector: 'app-checkout',
-
-  // Informa que esse é um componente standalone.
   standalone: true,
-
-  // Recursos que o HTML desse componente pode utilizar.
   imports: [CommonModule, FormsModule, RouterLink],
-
-  // Arquivo HTML do checkout.
   templateUrl: './checkout.html',
-
-  // Arquivo CSS do checkout.
-  styleUrl: './checkout.css',
+  styleUrl: './checkout.css'
 })
-
-// =========================================================
-// CLASSE CHECKOUT
-// =========================================================
 export class Checkout {
-  // =======================================================
-  // CONSTRUTOR
-  // =======================================================
-
-  // O constructor conecta essa página com o CarrinhoService.
-  //
-  // O "private" faz com que possamos utilizar
-  // o carrinhoService dentro desta classe.
   constructor(
-  private carrinhoService: CarrinhoService,
-  private cepService: CepService
-) {}
-  // =======================================================
-  // PRODUTOS
-  // =======================================================
+    private carrinhoService: CarrinhoService,
+    private cepService: CepService
+  ) {}
 
-  // Pega os produtos que estão no carrinho.
-  //
-  // Sempre que o HTML usa:
-  //
-  // {{ produtos }}
-  //
-  // ele chega aqui para buscar os produtos.
+  // PRODUTOS DO CARRINHO
   get produtos(): ProdutoCarrinho[] {
     return this.carrinhoService.getProdutos();
   }
 
-  // =======================================================
   // DADOS DO CLIENTE
-  // =======================================================
+  nome = '';
+  email = '';
+  telefone = '';
+  cep = '';
+  endereco = '';
+  numero = '';
+  bairro = '';
+  complemento = '';
 
-  // Nome digitado pelo cliente.
-  cep: string = '';
+  // PAGAMENTO
+  formaPagamento = '';
+  tipoCartao = '';
 
-  nome: string = '';
+  // DADOS DO CARTÃO
+  numeroCartao = '';
+  nomeCartao = '';
+  validadeCartao = '';
+  cvvCartao = '';
 
-  // Telefone digitado pelo cliente.
-  telefone: string = '';
-
-  // Rua ou avenida.
-  endereco: string = '';
-
-  // Número da residência.
-  numero: string = '';
-
-  // Bairro.
-  bairro: string = '';
-
-  // Complemento.
-  //
-  // Pode ficar vazio porque é opcional.
-  complemento: string = '';
-
-  // =======================================================
-  // FORMA DE PAGAMENTO
-  // =======================================================
-
-  // Guarda qual forma de pagamento foi escolhida.
-  //
-  // Pode receber:
-  //
-  // 'Cartão'
-  // 'Pix'
-  // 'Dinheiro'
-  //
-  // No começo fica vazio porque o cliente
-  // ainda não escolheu nada.
-  formaPagamento: string = '';
-
-  // =======================================================
-  // TIPO DO CARTÃO
-  // =======================================================
-
-  // Guarda se o cartão é:
-  //
-  // 'Crédito'
-  // ou
-  // 'Débito'
-  //
-  // No começo fica vazio.
-  tipoCartao: string = '';
-
-  // =======================================================
   // TROCO
-  // =======================================================
-
-  // Guarda se o cliente precisa de troco.
-  //
-  // null = ainda não respondeu.
-  //
-  // true = precisa de troco.
-  //
-  // false = não precisa de troco.
   precisaTroco: boolean | null = null;
+  valorTroco = 0;
 
-  // Guarda o valor para o qual o cliente
-  // quer o troco.
-  //
-  // Exemplo:
-  //
-  // Pedido: R$ 35
-  // Cliente informa: R$ 50
-  //
-  // O sistema entende que precisa devolver R$ 15.
-  valorTroco: number = 0;
+  // MENSAGEM DE ERRO
+  mensagemErro = '';
 
-  // =======================================================
   // DESCONTO
-  // =======================================================
-
-  // Busca o desconto que foi aplicado
-  // anteriormente no carrinho.
-  //
-  // Por exemplo:
-  //
-  // AROMA10
-  // ou
-  // CAFE5
-  //
   get desconto(): number {
     return this.carrinhoService.getDesconto();
   }
 
-  // =======================================================
   // SUBTOTAL
-  // =======================================================
-
-  // Calcula o valor dos produtos
-  // antes do desconto.
-  //
-  // Exemplo:
-  //
-  // Café = R$ 10
-  // Bolo = R$ 15
-  //
-  // Subtotal = R$ 25
   get subtotal(): number {
     return this.produtos.reduce(
-      (total, produto) => {
-        // Soma:
-        //
-        // preço × quantidade
-        //
-        return total + produto.preco * produto.quantidade;
-      },
-
-      // Começa a soma em zero.
-      0,
+      (soma, produto) =>
+        soma + produto.preco * produto.quantidade,
+      0
     );
   }
 
-  // =======================================================
   // TOTAL
-  // =======================================================
-
-  // Calcula o valor final.
-  //
-  // Subtotal - desconto = total.
   get total(): number {
-    return this.subtotal - this.desconto;
+    return Math.max(0, this.subtotal - this.desconto);
   }
 
-  // =======================================================
-  // CONTROLE DA TELA
-  // =======================================================
+  // CONFIRMAÇÃO
+  pedidoFinalizado = false;
+  numeroPedido = 0;
+  totalPedido = 0;
+  descontoPedido = 0;
 
-  // Diz se o pedido já foi finalizado.
-  //
-  // false:
-  // mostra o formulário.
-  //
-  // true:
-  // mostra a confirmação do pedido.
-  pedidoFinalizado: boolean = false;
-
-  // Guarda o número do pedido.
-  numeroPedido: number = 0;
-
-  // Guarda o total do pedido antes
-  // de limpar o carrinho.
-  totalPedido: number = 0;
-
-  // Guarda o desconto antes
-  // de limpar o carrinho.
-  descontoPedido: number = 0;
-
-  // =======================================================
-  // FINALIZAR PEDIDO
-  // =======================================================
-
+  // BUSCAR CEP
   buscarCep(): void {
-  this.cepService.buscarCep(this.cep).subscribe({
-    next: (dados) => {
-      if (dados.erro) {
+    const cepLimpo = this.cep.replace(/\D/g, '');
+
+    if (!cepLimpo) {
+      return;
+    }
+
+    if (cepLimpo.length !== 8) {
+      this.mensagemErro = 'Digite um CEP válido com 8 números.';
+      return;
+    }
+
+    this.mensagemErro = '';
+
+    this.cepService.buscarCep(cepLimpo).subscribe({
+      next: (dados) => {
+        if (dados.erro) {
+          this.mensagemErro =
+            'CEP não encontrado. Confira o número digitado.';
+          return;
+        }
+
+        this.endereco = dados.logradouro || '';
+        this.bairro = dados.bairro || '';
+        this.mensagemErro = '';
+      },
+      error: () => {
+        this.mensagemErro =
+          'Não foi possível consultar o CEP. Tente novamente.';
+      }
+    });
+  }
+
+  // FORMATAR NÚMERO DO CARTÃO
+  formatarCartao(): void {
+    const numeros = this.numeroCartao
+      .replace(/\D/g, '')
+      .slice(0, 16);
+
+    this.numeroCartao = numeros.replace(/(\d{4})(?=\d)/g, '$1 ');
+  }
+
+  // FORMATAR VALIDADE
+  formatarValidade(): void {
+    const numeros = this.validadeCartao
+      .replace(/\D/g, '')
+      .slice(0, 4);
+
+    this.validadeCartao = numeros.length > 2
+      ? numeros.slice(0, 2) + '/' + numeros.slice(2)
+      : numeros;
+  }
+
+  // FORMATAR CVV
+  formatarCVV(): void {
+    this.cvvCartao = this.cvvCartao
+      .replace(/\D/g, '')
+      .slice(0, 4);
+  }
+
+  // COPIAR CHAVE PIX
+  copiarPix(): void {
+    if (!navigator.clipboard) {
+      this.mensagemErro = 'Seu navegador não permite copiar automaticamente.';
+      return;
+    }
+
+    navigator.clipboard.writeText('aromacafe@gmail.com')
+      .then(() => {
+        alert('Chave Pix copiada!');
+      })
+      .catch(() => {
+        this.mensagemErro = 'Não foi possível copiar a chave Pix.';
+      });
+  }
+
+  // VALIDAR VALIDADE DO CARTÃO
+  private validadeCartaoValida(): boolean {
+    if (!/^\d{2}\/\d{2}$/.test(this.validadeCartao)) {
+      return false;
+    }
+
+    const [mes, ano] = this.validadeCartao.split('/').map(Number);
+
+    if (mes < 1 || mes > 12) {
+      return false;
+    }
+
+    const agora = new Date();
+    const anoAtual = agora.getFullYear() % 100;
+    const mesAtual = agora.getMonth() + 1;
+
+    return ano > anoAtual ||
+      (ano === anoAtual && mes >= mesAtual);
+  }
+
+  // FINALIZAR PEDIDO
+  finalizarPedido(): void {
+    this.mensagemErro = '';
+
+    // CARRINHO
+    if (this.produtos.length === 0) {
+      this.mensagemErro = 'Seu carrinho está vazio!';
+      return;
+    }
+
+    // NOME
+    if (this.nome.trim().length < 3) {
+      this.mensagemErro = 'Digite um nome válido.';
+      return;
+    }
+
+    // EMAIL
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      this.email.trim()
+    );
+
+    if (!emailValido) {
+      this.mensagemErro = 'Informe um e-mail válido.';
+      return;
+    }
+
+    // TELEFONE
+    const telefoneLimpo = this.telefone.replace(/\D/g, '');
+
+    if (
+      telefoneLimpo.length < 10 ||
+      telefoneLimpo.length > 11
+    ) {
+      this.mensagemErro = 'Informe um telefone válido com DDD.';
+      return;
+    }
+
+    // CEP
+    const cepLimpo = this.cep.replace(/\D/g, '');
+
+    if (cepLimpo && cepLimpo.length !== 8) {
+      this.mensagemErro = 'Digite um CEP válido.';
+      return;
+    }
+
+    // ENDEREÇO
+    if (this.endereco.trim().length < 3) {
+      this.mensagemErro = 'Digite um endereço válido.';
+      return;
+    }
+
+    // NÚMERO
+    if (!this.numero.trim()) {
+      this.mensagemErro = 'Digite o número do endereço.';
+      return;
+    }
+
+    // BAIRRO
+    if (this.bairro.trim().length < 3) {
+      this.mensagemErro = 'Digite um bairro válido.';
+      return;
+    }
+
+    // PAGAMENTO
+    if (!this.formaPagamento) {
+      this.mensagemErro = 'Escolha uma forma de pagamento.';
+      return;
+    }
+
+    // CARTÃO
+    if (this.formaPagamento === 'Cartão') {
+
+      if (!this.tipoCartao) {
+        this.mensagemErro = 'Escolha crédito ou débito.';
         return;
       }
 
-      this.endereco = dados.logradouro;
-      this.bairro = dados.bairro;
+      if (this.nomeCartao.trim().length < 3) {
+        this.mensagemErro = 'Informe o nome impresso no cartão.';
+        return;
+      }
+
+      if (this.numeroCartao.replace(/\D/g, '').length !== 16) {
+        this.mensagemErro = 'Informe um número de cartão com 16 dígitos.';
+        return;
+      }
+
+      if (!this.validadeCartaoValida()) {
+        this.mensagemErro = 'Informe uma validade de cartão válida.';
+        return;
+      }
+
+      if (!/^\d{3,4}$/.test(this.cvvCartao)) {
+        this.mensagemErro = 'Informe um CVV válido.';
+        return;
+      }
     }
-  });
-}
 
-  finalizarPedido(): void {
-    // -------------------------------------------------------
-    // VERIFICA SE O CARRINHO ESTÁ VAZIO
-    // -------------------------------------------------------
-
-    if (this.produtos.length === 0) {
-      alert('Seu carrinho está vazio!');
-
+    // TROCO
+    if (
+      this.formaPagamento === 'Dinheiro' &&
+      this.precisaTroco === null
+    ) {
+      this.mensagemErro = 'Informe se precisa de troco.';
       return;
     }
 
-    // -------------------------------------------------------
-    // VERIFICA O NOME
-    // -------------------------------------------------------
-
-    if (this.nome.trim().length < 3) {
-      alert('Digite um nome válido com pelo menos 3 caracteres.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA O TELEFONE
-    // -------------------------------------------------------
-
-    if (this.telefone.trim() === '') {
-      alert('Digite seu telefone.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA O ENDEREÇO
-    // -------------------------------------------------------
-
-    if (this.endereco.trim().length < 3) {
-      alert('Digite um endereço válido.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA O NÚMERO
-    // -------------------------------------------------------
-
-    if (this.numero.trim() === '') {
-      alert('Digite o número do endereço.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA O BAIRRO
-    // -------------------------------------------------------
-
-    if (this.bairro.trim().length < 3) {
-      alert('Digite um bairro válido.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA A FORMA DE PAGAMENTO
-    // -------------------------------------------------------
-
-    // Se o cliente não escolheu nenhuma opção,
-    // não deixa finalizar.
-    if (this.formaPagamento === '') {
-      alert('Escolha uma forma de pagamento.');
-
-      return;
-    }
-
-    // =======================================================
-    // VALIDAÇÃO DO CARTÃO
-    // =======================================================
-
-    // Se escolheu cartão,
-    // precisa escolher Crédito ou Débito.
-    if (this.formaPagamento === 'Cartão' && this.tipoCartao === '') {
-      alert('Escolha se o cartão é crédito ou débito.');
-
-      return;
-    }
-
-    // =======================================================
-    // VALIDAÇÃO DO DINHEIRO
-    // =======================================================
-
-    // Se escolheu dinheiro,
-    // precisa responder se precisa de troco.
-    if (this.formaPagamento === 'Dinheiro' && this.precisaTroco === null) {
-      alert('Informe se precisa de troco.');
-
-      return;
-    }
-
-    // -------------------------------------------------------
-    // VERIFICA O VALOR DO TROCO
-    // -------------------------------------------------------
-
-    // Se precisa de troco,
-    // o valor informado precisa ser maior
-    // que o valor total da compra.
-    //
-    // Exemplo:
-    //
-    // Total = R$ 30
-    //
-    // Troco para R$ 50 -> OK
-    //
-    // Troco para R$ 20 -> ERRADO
     if (
       this.formaPagamento === 'Dinheiro' &&
       this.precisaTroco === true &&
-      this.valorTroco <= this.total
+      (
+        !Number.isFinite(this.valorTroco) ||
+        this.valorTroco <= this.total
+      )
     ) {
-      alert('O valor do troco deve ser maior que o total do pedido.');
-
+      this.mensagemErro =
+        'O valor para o troco deve ser maior que o total do pedido.';
       return;
     }
 
-    // =======================================================
-    // GUARDAR OS VALORES
-    // =======================================================
-
-    // Guarda o total antes de limpar o carrinho.
-    //
-    // Isso é importante porque depois o carrinho
-    // será esvaziado.
+    // GUARDAR VALORES
     this.totalPedido = this.total;
-
-    // Guarda o desconto aplicado.
     this.descontoPedido = this.desconto;
 
-    // =======================================================
-    // GERAR NÚMERO DO PEDIDO
-    // =======================================================
+    // GERAR NÚMERO
+    this.numeroPedido =
+      Math.floor(Math.random() * 90000) + 10000;
 
-    // Gera um número aleatório de 5 dígitos.
-    //
-    // Exemplo:
-    // #48321
-    this.numeroPedido = Math.floor(Math.random() * 90000) + 10000;
-
-    // =======================================================
-    // MOSTRAR CONFIRMAÇÃO
-    // =======================================================
-
-    // Muda para true.
-    //
-    // Com isso:
-    //
-    // *ngIf="!pedidoFinalizado"
-    //
-    // deixa de mostrar o formulário.
-    //
-    // E:
-    //
-    // *ngIf="pedidoFinalizado"
-    //
-    // mostra a confirmação.
+    // FINALIZAR
     this.pedidoFinalizado = true;
 
-    // =======================================================
     // LIMPAR CARRINHO
-    // =======================================================
-
-    // Depois que o pedido foi finalizado,
-    // remove os produtos do carrinho.
     this.carrinhoService.limparCarrinho();
   }
 }

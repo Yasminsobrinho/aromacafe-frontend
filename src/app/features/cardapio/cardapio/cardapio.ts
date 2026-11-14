@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NgOptimizedImage } from '@angular/common';
 // Importa o cliente HTTP usado para chamar a API interna do projeto.
 import { HttpClient } from '@angular/common/http';
 import { CarrinhoService } from '../../carrinho/carrinho/carrinho.service';
 import { Rodape } from '../../home/home/pginicial/rodape/rodape';
 import { Menu } from '../../home/home/pginicial/menu/menu';
+// Carrossel "Nossos Favoritos" (estilo peek: o próximo card aparece cortado).
+import { CarrosselPeekComponent } from './carrosel-peek/carrosel-peek';
+import { DESTAQUE_SELOS } from './favoritos-data';
 
 interface Produto {
   nome: string;
@@ -63,14 +64,21 @@ interface RespostaComidasApi {
 @Component({
   selector: 'app-cardapio',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgOptimizedImage, Rodape, Menu],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgOptimizedImage,
+    Rodape,
+    Menu,
+    CarrosselPeekComponent,
+  ],
   templateUrl: './cardapio.html',
   styleUrls: ['./cardapio.css'],
   host: {
     '(window:scroll)': 'carregarMaisItens()',
   },
 })
-export class CardapioComponent implements OnInit {
+export class CardapioComponent implements OnInit, OnDestroy {
   constructor(
     private carrinhoService: CarrinhoService,
     private http: HttpClient,
@@ -394,12 +402,24 @@ export class CardapioComponent implements OnInit {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase();
 
+    if (nomeNormalizado.includes('laranja') || nomeNormalizado.includes('limonada')) {
+      return 'limonada.jpg';
+    }
+
+    if (nomeNormalizado.includes('caramelo')) {
+      return 'classiccaramel.jpg';
+    }
+
     if (nomeNormalizado.includes('cold brew')) {
-      return 'coldbrew.jpg';
+      return 'cafe.jpg';
     }
 
     if (nomeNormalizado.includes('matcha')) {
       return 'brownsugarbubbletea.jpg';
+    }
+
+    if (nomeNormalizado.includes('chocolate')) {
+      return 'chocolatequente.jpg';
     }
 
     if (nomeNormalizado.includes('mocha')) {
@@ -410,11 +430,134 @@ export class CardapioComponent implements OnInit {
       return 'whitemocha.jpg';
     }
 
-    if (nomeNormalizado.includes('latte')) {
+    if (
+      nomeNormalizado.includes('latte') ||
+      nomeNormalizado.includes('cappuccino') ||
+      nomeNormalizado.includes('macchiato') ||
+      nomeNormalizado.includes('leite')
+    ) {
       return 'lattedebaunilha.jpg';
     }
 
     return 'cafepreto.jpg';
+  }
+
+  usarImagemReserva(event: Event): void {
+    const imagem = event.target;
+    if (!(imagem instanceof HTMLImageElement) || imagem.dataset['reservaAplicada']) return;
+
+    imagem.dataset['reservaAplicada'] = 'true';
+    imagem.src = '/cafepreto.jpg';
+  }
+
+  // =====================================================
+  // DESTAQUES ("Nossos Favoritos" - carrossel peek)
+  // nome do produto -> selo ('' = sem selo)
+  // Para destacar um produto, acrescente o nome EXATO dele aqui.
+  // A API manda alguns nomes sem acento ("Pao de queijo"), por isso
+  // esses produtos aparecem com as duas grafias.
+  // =====================================================
+
+  readonly destaqueSelos = DESTAQUE_SELOS;
+
+  // =====================================================
+  // AVALIAÇÕES (estrelas nos cards)
+  // nome do produto -> nota de 0 a 5
+  // A comparação ignora acento e maiúscula/minúscula, então
+  // "Pão de queijo" e "Pao de queijo" valem o mesmo produto.
+  // Produto que não estiver aqui fica sem estrelas.
+  // =====================================================
+
+  readonly notas: Record<string, number> = {
+    // Salgados
+    'Croissants e Folhados Especiais': 4.5,
+    'Croissants Recheados': 4.0,
+    'Misto Quente': 4.2,
+    'Pão com Mortadela': 4.0,
+    'Empadinhas': 4.0,
+    'Pão de queijo': 4.5,
+    'Mini pão francês': 4.0,
+    'Salgado': 4.0,
+    'Coxinha': 4.0,
+
+    // Doces
+    'Bolo de Cenoura com Cobertura de Chocolate': 4.5,
+    'Brownie': 4.0,
+    'Torta Cookie': 4.0,
+    'Torta de Morango': 4.5,
+    'Croissants Doce': 4.0,
+    'Brigadeiro com Morango': 4.0,
+    'Mini Churros': 3.9,
+    'Sonhos': 4.0,
+    'Donuts Americanos': 4.0,
+
+    // Bebidas (os nomes vêm da API). Basta o nome conter a palavra:
+    // "Iced Latte" e "Caramel Latte" pegam a nota de 'Latte'.
+    'Espresso': 4.5,
+    'Americano': 4.2,
+    'Cappuccino': 4.6,
+    'Macchiato': 4.4,
+    'Latte': 4.5,
+    'Flat White': 4.5,
+    'Mocha': 4.5,
+    'Cold Brew': 4.5,
+    'Matcha': 4.0,
+    'Chocolate Quente': 4.7,
+    'Chai': 4.3,
+    'Cafe': 4.4,
+  };
+
+  private normalizar(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
+  // Chaves mais longas primeiro, para "Flat White" ganhar de "White" e
+  // "Cold Brew" ganhar de "Brew".
+  private readonly notasNormalizadas: [string, number][] = Object.entries(this.notas)
+    .map(([nome, valor]) => [this.normalizar(nome), valor] as [string, number])
+    .sort((a, b) => b[0].length - a[0].length);
+
+  notaDe(nome: string): number | undefined {
+    const alvo = this.normalizar(nome);
+
+    // 1) nome idêntico (sem acento / maiúscula)
+    const exata = this.notasNormalizadas.find(([chave]) => chave === alvo);
+    if (exata) return exata[1];
+
+    // 2) nome que contém a chave (ex.: "Iced Latte" contém "latte")
+    const parcial = this.notasNormalizadas.find(([chave]) => alvo.includes(chave));
+    if (parcial) return parcial[1];
+
+    // 3) bebida da API que não está no mapa: recebe uma nota padrão,
+    //    para nenhum café ficar sem estrelas.
+    const ehBebida = this.bebidas.some((b) => this.normalizar(b.nome) === alvo);
+    return ehBebida ? this.notaPadrao(alvo) : undefined;
+  }
+
+  // Nota entre 4.0 e 4.9 calculada a partir do nome: cada bebida sempre
+  // recebe o mesmo valor, mas as bebidas não ficam todas iguais.
+  private notaPadrao(nomeNormalizado: string): number {
+    let soma = 0;
+    for (const letra of nomeNormalizado) soma += letra.charCodeAt(0);
+    return 4 + (soma % 10) / 10;
+  }
+
+  // Guarda o resultado para não montar a lista de novo a cada verificação da tela.
+  private destaquesCache: Produto[] = [];
+  private destaquesOrigem: Produto[][] = [];
+
+  get destaques(): Produto[] {
+    const origem = [this.comidasSalgadas, this.sobremesas, this.bebidas];
+    if (origem.some((lista, i) => lista !== this.destaquesOrigem[i])) {
+      this.destaquesOrigem = origem;
+      const todos = [...this.comidasSalgadas, ...this.sobremesas, ...this.bebidas];
+      this.destaquesCache = todos.filter((p) => this.destaqueSelos[p.nome] !== undefined);
+    }
+    return this.destaquesCache;
   }
 
   // =====================================================
@@ -445,16 +588,22 @@ export class CardapioComponent implements OnInit {
     );
   }
 
+  // Na aba "Todos" e sem busca, os destaques ficam só no carrossel.
+  private semDestaques(lista: Produto[]): Produto[] {
+    const ocultar = this.categoriaSelecionada === 'Todos' && !this.termoBusca;
+    return ocultar ? lista.filter((p) => this.destaqueSelos[p.nome] === undefined) : lista;
+  }
+
   get salgadosVisiveis(): Produto[] {
-    return this.salgadosFiltrados.slice(0, this.quantidadeItensVisiveis);
+    return this.semDestaques(this.salgadosFiltrados).slice(0, this.quantidadeItensVisiveis);
   }
 
   get sobremesasVisiveis(): Produto[] {
-    return this.sobremesasFiltradas.slice(0, this.quantidadeItensVisiveis);
+    return this.semDestaques(this.sobremesasFiltradas).slice(0, this.quantidadeItensVisiveis);
   }
 
   get bebidasVisiveis(): Produto[] {
-    return this.bebidasFiltradas.slice(0, this.quantidadeItensVisiveis);
+    return this.semDestaques(this.bebidasFiltradas).slice(0, this.quantidadeItensVisiveis);
   }
 
   carregarMaisItens(): void {
@@ -462,7 +611,8 @@ export class CardapioComponent implements OnInit {
       return;
     }
 
-    const pertoDoFim = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500;
+    const pertoDoFim =
+      window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500;
     if (pertoDoFim) {
       this.quantidadeItensVisiveis += this.itensPorLote;
     }
@@ -475,7 +625,38 @@ export class CardapioComponent implements OnInit {
   adicionarAoCarrinho(produto: Produto): void {
     this.carrinhoService.adicionarProduto(produto);
 
-    alert(`${produto.nome} foi adicionado ao carrinho!`);
+    this.mostrarToast(produto.nome);
+  }
+
+  // =====================================================
+  // AVISO "ADICIONADO AO CARRINHO" (toast)
+  // =====================================================
+
+  // Lista com no máximo 1 aviso; o id novo faz o aviso reaparecer do zero.
+  toasts: { id: number; nome: string }[] = [];
+  // Quanto tempo o aviso fica na tela (a barra do rodapé segue esse tempo).
+  readonly toastDuracaoMs = 4000;
+
+  private proximoToastId = 0;
+  private toastTimer?: ReturnType<typeof setTimeout>;
+
+  trackToast(_: number, toast: { id: number }): number {
+    return toast.id;
+  }
+
+  private mostrarToast(nome: string): void {
+    clearTimeout(this.toastTimer);
+    this.toasts = [{ id: ++this.proximoToastId, nome }];
+    this.toastTimer = setTimeout(() => this.fecharToast(), this.toastDuracaoMs);
+  }
+
+  fecharToast(): void {
+    clearTimeout(this.toastTimer);
+    this.toasts = [];
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.toastTimer);
   }
 
   // =====================================================
@@ -488,4 +669,3 @@ export class CardapioComponent implements OnInit {
       .reduce((total, produto) => total + produto.quantidade, 0);
   }
 }
-

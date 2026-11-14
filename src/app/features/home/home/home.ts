@@ -1,50 +1,69 @@
-// Importa a classe Component para criar um componente Angular
-import { Component, signal } from '@angular/core';
-// Importa RouterLink para permitir a navegação entre as páginas
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CarrinhoService } from '../../carrinho/carrinho/carrinho.service';
-// Importa o componente Sobre
 import { Sobre } from './pginicial/sobre/sobre';
-import { Local } from "./pginicial/local/local";
-import { Playlist } from "./pginicial/playlist/playlist";
-import { Rodape } from "./pginicial/rodape/rodape";
+import { Local } from './pginicial/local/local';
+import { Playlist } from './pginicial/playlist/playlist';
+import { Rodape } from './pginicial/rodape/rodape';
 import { Menu } from './pginicial/menu/menu';
+import { Avaliacoes } from './pginicial/avaliacoes/avaliacoes';
+import {
+  CarrosselPeekComponent,
+  type ItemCarrossel,
+} from '../../cardapio/cardapio/carrosel-peek/carrosel-peek';
+import { DESTAQUE_SELOS, DESTAQUES_INICIAIS } from '../../cardapio/cardapio/favoritos-data';
 
-
-// Configurações do componente Home
 @Component({
   selector: 'app-home',
   standalone: true,
-   // Importa os recursos usados no HTML
-  imports: [Menu, Sobre, Local, Playlist, Rodape],
+  imports: [
+    RouterLink,
+    Menu,
+    Sobre,
+    Local,
+    Playlist,
+    Rodape,
+    CarrosselPeekComponent,
+    Avaliacoes,
+  ],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
-
-
 export class Home {
+  imgheader = 'imgcentro.jpg';
 
-   // Define o caminho/nome das imagens usadas
-  logo: string = 'favicon.ico';
-  imgheader: string = 'header.jpeg';
-  menuAberto = signal(false);
+  constructor(private carrinhoService: CarrinhoService) {}
 
-   constructor(private carrinhoService: CarrinhoService) {}
+  // "icone" = caminho (path) de um SVG 24x24
+  diferenciais = [
+    {
+      titulo: 'Grãos selecionados',
+      texto: 'Origem cuidadosa e torra na medida certa.',
+      // TODO: cole aqui o seu path original (essa linha ficou escondida no arquivo corrompido)
+      icone: 'M5 8h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5V8z M16 9h2a2 2 0 0 1 0 4h-2',
+    },
+    {
+      titulo: 'Sempre fresco',
+      texto: 'Pães e doces feitos no dia, com ingredientes de verdade.',
+      icone: 'M5 19C5 10 10 5 20 4c0 10-5 15-14 15ZM5 19 14 10',
+    },
+    {
+      titulo: 'Baristas experientes',
+      texto: 'Preparo feito com atenção a cada detalhe.',
+      icone: 'M7 14a4 4 0 1 1 1.5-7.7A4 4 0 0 1 16 6a4 4 0 0 1 1 8v5H7v-5ZM7 17h10',
+    },
+    {
+      titulo: 'Feito com amor',
+      texto: 'Porque você merece o melhor.',
+      icone: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z',
+    },
+  ];
 
-    // calcula a quantidade total de produtos no carrinho
-    get quantidadeCarrinho(): number {
-      return this.carrinhoService.getProdutos().reduce((total, produto) => {
-        return total + produto.quantidade;
-      }, 0);
-    }
+  readonly destaques = DESTAQUES_INICIAIS;
+  readonly destaqueSelos = DESTAQUE_SELOS;
 
-  alternarMenu(): void {
-    this.menuAberto.update((aberto) => !aberto);
+  adicionarAoCarrinho(produto: ItemCarrossel): void {
+    this.carrinhoService.adicionarProduto(produto);
+    alert(`${produto.nome} foi adicionado ao carrinho!`);
   }
-
-  fecharMenu(): void {
-    this.menuAberto.set(false);
-  }
-
-
-  }
-
+}

@@ -1,407 +1,708 @@
-/* =========================
+
+/* =====================================
    CHECKOUT - AROMA CAFÉ
-   ========================= */
+===================================== */
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #e8dfd2;
+  background: #100905;
+}
+
+* {
+  box-sizing: border-box;
+}
 
 .checkout-container {
   min-height: 100vh;
-  box-sizing: border-box;
-  background: #eeddc3;
-  color: #3b2418;
-  padding: 40px 20px 60px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 45px 5%;
+  background:
+    radial-gradient(
+      ellipse at top left,
+      rgba(126, 77, 40, .15),
+      transparent 45%
+    ),
+    #100905;
 }
 
-
-/* =========================
-   CABEÇALHO
-   ========================= */
+/* CABEÇALHO */
 
 .checkout-header {
-  width: 100%;
-  max-width: 850px;
+  max-width: 1200px;
+  margin: 0 auto 38px;
   text-align: center;
-  margin-bottom: 30px;
 }
 
-.checkout-header span {
-  display: block;
-  color: #6f452b;
-  font-size: 15px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
+.checkout-header > span {
+  color: #c9a064;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 5px;
 }
 
 .checkout-header h1 {
-  margin: 0;
-  color: #3b2418;
-  font-size: 40px;
+  margin: 14px 0;
+  color: #f0e5d5;
+  font-family: Georgia, serif;
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 400;
 }
 
 .checkout-header p {
-  margin: 8px 0 0;
-  color: #765c4c;
-  font-size: 16px;
+  color: #b8a997;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
+/* BOTÃO VOLTAR */
 
-/* =========================
-   CONTEÚDO CENTRAL
-   ========================= */
+.voltar-menu {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  color: #c9a064;
+  text-decoration: none;
+  font-size: 14px;
+  transition: .2s;
+}
+
+.voltar-menu:hover {
+  color: #f0d5a9;
+  transform: translateX(-3px);
+}
+
+/* LAYOUT */
 
 .checkout-conteudo {
-  width: 100%;
-  max-width: 850px;
-  margin: 0 auto;
-
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, .85fr);
+  grid-template-areas:
+    "entrega resumo"
+    "pagamento resumo"
+    "erro resumo";
+  align-items: start;
+  gap: 22px;
+  max-width: 1200px;
+  margin: auto;
 }
 
+/* CARDS */
 
-/* =========================
-   DADOS DE ENTREGA
-   ========================= */
+.dados-entrega,
+.pagamento {
+  min-width: 0;
+  padding: 30px;
+  border: 1px solid #35251a;
+  border-radius: 12px;
+  background: #19100b;
+}
 
 .dados-entrega {
-  width: 100%;
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 16px;
-  box-sizing: border-box;
-
-  box-shadow: 0 5px 20px rgba(59, 36, 24, 0.10);
+  grid-area: entrega;
 }
 
-.dados-entrega h2 {
-  margin: 0 0 20px;
-  color: #3b2418;
-  font-size: 22px;
+.pagamento {
+  grid-area: pagamento;
 }
 
+/* TÍTULOS DAS SEÇÕES */
 
-/* =========================
-   LABELS
-   ========================= */
+.titulo-secao {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 28px;
+}
 
-.dados-entrega label {
+.numero-secao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid #765331;
+  border-radius: 50%;
+  color: #d8b47a;
+  font-size: 13px;
+}
+
+.titulo-secao h2,
+.resumo-pedido h2 {
+  margin: 0 0 7px;
+  color: #eee2d0;
+  font-family: Georgia, serif;
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.titulo-secao p,
+.resumo-subtitulo {
+  margin: 0;
+  color: #a99986;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* FORMULÁRIO DE ENTREGA */
+
+.campos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.campo {
+  min-width: 0;
+}
+
+.campo-completo {
+  grid-column: 1 / -1;
+}
+
+.campo label {
   display: block;
-  margin: 14px 0 6px;
+  margin-bottom: 9px;
+  color: #d4c5b2;
+  font-size: 13px;
+}
 
-  color: #4b2e20;
+.campo input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #493524;
+  border-radius: 6px;
+  outline: none;
+  background: #100905;
+  color: #f0e5d5;
   font-size: 14px;
+  transition: .2s;
+}
+
+.campo input::placeholder {
+  color: #847365;
+}
+
+.campo input:focus {
+  border-color: #c9a064;
+  box-shadow: 0 0 0 2px rgba(201, 160, 100, .1);
+}
+
+/* FORMAS DE PAGAMENTO */
+
+.opcoes-pagamento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.opcao-pagamento {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px 12px;
+  border: 1px solid #493524;
+  border-radius: 8px;
+  background: #120b07;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.opcao-pagamento:hover,
+.opcao-pagamento.selecionado {
+  border-color: #c9a064;
+  background: #25180f;
+}
+
+.opcao-pagamento input {
+  position: absolute;
+  opacity: 0;
+}
+
+.pagamento-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #35251a;
+  color: #d8b47a;
+  font-size: 20px;
   font-weight: bold;
 }
 
+.pagamento-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-/* =========================
-   INPUTS
-   ========================= */
-
-.dados-entrega input[type="text"],
-.dados-entrega input[type="tel"] {
-  width: 100%;
-  height: 42px;
-
-  box-sizing: border-box;
-  padding: 0 12px;
-
-  border: 1px solid #d8c5b5;
-  border-radius: 8px;
-
-  outline: none;
-
-  color: #3b2418;
-  background: #ffffff;
-
+.pagamento-texto strong {
+  color: #eee2d0;
   font-size: 14px;
 }
 
-.dados-entrega input:focus {
-  border-color: #8b5e3c;
-  box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.08);
+.pagamento-texto small {
+  color: #a99986;
+  font-size: 11px;
 }
 
-.dados-entrega input::placeholder {
-  color: #a18f82;
+.radio-indicador {
+  position: absolute;
+  top: 17px;
+  right: 13px;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #806347;
+  border-radius: 50%;
 }
 
-
-/* =========================
-   PAGAMENTO
-   ========================= */
-
-.pagamento {
-  width: 100%;
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 16px;
-  box-sizing: border-box;
-
-  box-shadow: 0 5px 20px rgba(59, 36, 24, 0.10);
+.opcao-pagamento.selecionado .radio-indicador {
+  border: 4px solid #c9a064;
+  background: #19100b;
 }
 
-.pagamento h2 {
-  margin: 0 0 18px;
-  color: #3b2418;
-  font-size: 22px;
+/* DETALHES DO PAGAMENTO */
+
+.detalhes-pagamento {
+  margin-top: 22px;
+  padding: 22px;
+  border: 1px solid #493524;
+  border-radius: 8px;
+  background: #120b07;
+  animation: aparecer .2s ease;
 }
 
-.pagamento label {
+.detalhes-pagamento h3 {
+  margin: 0 0 10px;
+  color: #e9ddcc;
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.detalhes-pagamento p {
+  color: #b8a997;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.descricao-pagamento {
+  margin-bottom: 20px;
+}
+
+/* PIX */
+
+.pix-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 25px 15px;
+  border: 1px solid #493524;
+  border-radius: 10px;
+  background: #19100b;
+}
+
+.qr-code {
   display: flex;
   align-items: center;
-  gap: 10px;
-
-  margin-bottom: 13px;
-
-  color: #4b2e20;
-  font-size: 15px;
-
-  cursor: pointer;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
 }
 
-.pagamento input[type="radio"] {
-  width: 17px;
-  height: 17px;
-
-  accent-color: #8b5e3c;
-  cursor: pointer;
+.qr-code img {
+  display: block;
+  width: 190px;
+  height: 190px;
+  object-fit: contain;
 }
 
+.pix-legenda {
+  color: #d8b47a;
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
 
-/* =========================
-   RESUMO DO PEDIDO
-   ========================= */
+.chave-pix {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #59432d;
+  border-radius: 7px;
+  background: #1c120b;
+  text-align: center;
+}
+
+.chave-pix small {
+  color: #a99986;
+}
+
+.chave-pix strong {
+  color: #d8b47a;
+  overflow-wrap: anywhere;
+}
+
+.copiar-pix {
+  width: 100%;
+  max-width: 280px;
+  padding: 13px;
+  border: 1px solid #c9a064;
+  border-radius: 6px;
+  background: #c9a064;
+  color: #160e08;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.copiar-pix:hover {
+  background: #dfbd83;
+}
+
+.aviso-pagamento {
+  margin-bottom: 0;
+  color: #a99986;
+  font-size: 12px !important;
+  text-align: center;
+}
+
+/* CARTÃO */
+
+.tipos-cartao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.tipos-cartao label,
+.opcoes-troco label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 15px;
+  border: 1px solid #493524;
+  border-radius: 6px;
+  color: #e0d3c1;
+  font-size: 13px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.tipos-cartao label.ativo {
+  border-color: #c9a064;
+  background: #25180f;
+}
+
+.tipos-cartao input,
+.opcoes-troco input {
+  accent-color: #c9a064;
+}
+
+.formulario-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.cartao-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* DINHEIRO E TROCO */
+
+.opcoes-troco {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.campo-troco {
+  max-width: 300px;
+  margin-top: 15px;
+}
+
+/* RESUMO BEGE */
 
 .resumo-pedido {
-  width: 100%;
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 16px;
-  box-sizing: border-box;
-
-  box-shadow: 0 5px 20px rgba(59, 36, 24, 0.10);
+  grid-area: resumo;
+  position: sticky;
+  top: 25px;
+  padding: 30px;
+  border-radius: 12px;
+  background: #e9dcc6;
+  color: #3b2418;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
 }
 
 .resumo-pedido h2 {
-  margin: 0 0 20px;
-
   color: #3b2418;
-  font-size: 22px;
 }
 
-
-/* =========================
-   PRODUTO DO RESUMO
-   ========================= */
+.resumo-subtitulo {
+  margin-bottom: 22px;
+  color: #826b56;
+}
 
 .produto-resumo {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #d3c1a7;
+}
 
-  gap: 20px;
-
-  padding: 14px 0;
-
-  border-bottom: 1px solid #eadfd5;
+.produto-resumo > div {
+  min-width: 0;
 }
 
 .produto-resumo strong {
   color: #3b2418;
-  font-size: 15px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .produto-resumo p {
-  margin: 5px 0 0;
+  margin: 6px 0 0;
+  color: #826b56;
+  font-size: 12px;
+}
 
-  color: #806b5d;
+.produto-resumo > span {
+  flex-shrink: 0;
+  color: #6b4228;
   font-size: 13px;
-}
-
-.produto-resumo span {
-  color: #6f452b;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-
-/* =========================
-   LINHAS DO RESUMO
-   ========================= */
-
-.resumo-pedido hr {
-  border: none;
-  border-top: 1px solid #eadfd5;
-
-  margin: 18px 0;
+  font-weight: 700;
 }
 
 .linha-resumo {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  margin: 11px 0;
-
-  color: #765c4c;
+  gap: 10px;
+  margin: 17px 0;
+  color: #725a44;
+  font-size: 14px;
 }
 
 .linha-resumo.desconto {
-  color: #4f7a45;
+  color: #52794b;
 }
-
-
-/* =========================
-   TOTAL
-   ========================= */
 
 .linha-total {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  margin-top: 18px;
-
-  color: #3b2418;
-  font-size: 21px;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #c8b397;
 }
 
+.linha-total strong:first-child {
+  color: #3b2418;
+  font-size: 16px;
+}
 
-/* =========================
-   BOTÃO FINALIZAR
-   ========================= */
+.linha-total strong:last-child {
+  color: #3b2418;
+  font-size: 25px;
+}
 
 .finalizar {
   width: 100%;
-  height: 50px;
-
+  margin-top: 28px;
+  padding: 17px;
   border: none;
-  border-radius: 10px;
-
-  background: #6f452b;
-  color: white;
-
-  font-size: 16px;
-  font-weight: bold;
-
+  border-radius: 6px;
+  background: #3b2418;
+  color: #f0e5d5;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .5px;
   cursor: pointer;
-
-  transition: 0.2s;
+  transition: .25s;
 }
 
 .finalizar:hover {
-  background: #4b2e20;
-  transform: translateY(-1px);
+  background: #63432c;
+  transform: translateY(-2px);
 }
 
+.finalizar:active {
+  transform: translateY(0);
+}
 
-/* =========================
-   BOTÃO VOLTAR
-   ========================= */
+.seguranca {
+  margin: 18px 0 0;
+  color: #826b56;
+  font-size: 12px;
+  text-align: center;
+}
 
-.voltar-menu {
-  position: absolute;
+/* MENSAGEM DE ERRO */
 
-  top: 30px;
-  left: 30px;
+.mensagem-erro {
+  grid-area: erro;
+  padding: 15px;
+  border: 1px solid #754038;
+  border-radius: 7px;
+  background: #24110e;
+  color: #f0b4a8;
+  font-size: 14px;
+  line-height: 1.6;
+}
 
-  width: 45px;
-  height: 45px;
+/* PEDIDO CONFIRMADO */
 
+.pedido-confirmado {
+  max-width: 760px;
+  margin: 30px auto;
+  padding: 40px;
+  border: 1px solid #35251a;
+  border-radius: 12px;
+  background: #19100b;
+  text-align: center;
+  animation: aparecer .3s ease;
+}
+
+.sucesso-icone {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: #8b5e3c;
-  color: white;
-
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 22px;
+  border: 1px solid #739b72;
   border-radius: 50%;
-
-  text-decoration: none;
-
-  font-size: 25px;
-  font-weight: bold;
-
-  box-shadow: 0 4px 10px rgba(59, 36, 24, 0.15);
-
-  transition: 0.2s;
-}
-
-.voltar-menu:hover {
-  background: #6f452b;
-  transform: translateX(-3px);
-}
-
-
-/* =========================
-   PEDIDO CONFIRMADO
-   ========================= */
-
-.pedido-confirmado {
-  width: 100%;
-  max-width: 650px;
-
-  margin: 20px auto 0;
-
-  padding: 40px;
-
-  box-sizing: border-box;
-
-  background: #ffffff;
-
-  border-radius: 16px;
-
-  text-align: center;
-
-  box-shadow: 0 5px 20px rgba(59, 36, 24, 0.10);
+  background: #172018;
+  color: #a6d2a2;
+  font-size: 38px;
 }
 
 .pedido-confirmado h2 {
-  margin: 0 0 20px;
-
-  color: #4f7a45;
-
-  font-size: 25px;
+  color: #e9ddcc;
+  font-family: Georgia, serif;
+  font-weight: 400;
 }
 
-.pedido-confirmado h1 {
-  margin: 10px 0 25px;
-
-  color: #6f452b;
-
-  font-size: 40px;
+.pedido-confirmado > p {
+  color: #b8a997;
+  line-height: 1.7;
 }
 
-.pedido-confirmado p {
-  margin: 12px 0;
-
-  color: #765c4c;
-
-  font-size: 15px;
+.pedido-confirmado > h1 {
+  color: #d8b47a;
+  font-size: 36px;
 }
 
-.pedido-confirmado strong {
-  color: #3b2418;
+.confirmacao-detalhes {
+  max-width: 540px;
+  margin: 25px auto;
+  padding: 20px;
+  border: 1px solid #35251a;
+  border-radius: 8px;
+  background: #120b07;
+  text-align: left;
 }
 
+.confirmacao-detalhes p {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #302117;
+  color: #c3b19c;
+  font-size: 13px;
+  line-height: 1.6;
+}
 
-/* =========================
-   CELULAR
-   ========================= */
+.confirmacao-detalhes p:last-child {
+  border-bottom: none;
+}
 
-@media (max-width: 600px) {
+.confirmacao-detalhes strong {
+  color: #d8b47a;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
 
-  .checkout-container {
-    padding: 25px 15px 40px;
+.mensagem-agradecimento {
+  color: #c3b19c;
+}
+
+.voltar-cardapio {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  background: #c9a064;
+  color: #160e08;
+  font-weight: 700;
+  text-decoration: none;
+  transition: .2s;
+}
+
+.voltar-cardapio:hover {
+  background: #dfbd83;
+}
+
+/* ANIMAÇÕES */
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
   }
 
-  .checkout-header {
-    margin-bottom: 25px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TABLET */
+
+@media (max-width: 850px) {
+  .checkout-conteudo {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "entrega"
+      "pagamento"
+      "resumo"
+      "erro";
+  }
+
+  .resumo-pedido {
+    position: static;
+  }
+
+  .checkout-container {
+    padding: 35px 24px;
+  }
+}
+
+/* CELULAR */
+
+@media (max-width: 550px) {
+  .checkout-container {
+    padding: 75px 14px 25px;
   }
 
   .checkout-header h1 {
@@ -409,37 +710,76 @@
   }
 
   .checkout-header p {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .dados-entrega,
   .pagamento,
   .resumo-pedido {
-    padding: 22px 20px;
+    padding: 20px 16px;
   }
 
-  .produto-resumo {
-    gap: 10px;
+  .campos-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
-  .produto-resumo span {
-    font-size: 14px;
+  .campo-completo {
+    grid-column: auto;
   }
 
-  .linha-total {
-    font-size: 19px;
+  .opcoes-pagamento {
+    grid-template-columns: 1fr;
+  }
+
+  .opcao-pagamento {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .pagamento-texto {
+    flex: 1;
+  }
+
+  .qr-code img {
+    width: 165px;
+    height: 165px;
+  }
+
+  .cartao-campos {
+    grid-template-columns: 1fr 1fr;
   }
 
   .pedido-confirmado {
-    padding: 30px 20px;
+    padding: 25px 16px;
   }
 
-  .pedido-confirmado h1 {
-    font-size: 34px;
+  .confirmacao-detalhes {
+    padding: 12px;
   }
 
-  .voltar-menu {
-    top: 20px;
-    left: 15px;
+  .confirmacao-detalhes p {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .confirmacao-detalhes strong {
+    text-align: left;
+  }
+
+  .voltar-cardapio {
+    display: block;
+    text-align: center;
+  }
+}
+
+/* ACESSIBILIDADE */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

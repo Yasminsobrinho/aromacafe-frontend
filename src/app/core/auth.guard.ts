@@ -1,4 +1,5 @@
-import { inject } from '@angular/core';
+import { PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 
@@ -18,4 +19,23 @@ export const authGuard: CanActivateFn = (route, state) => {
   router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
 
   return false; // bloqueia o carregamento da rota original (o carrinho)
+};
+
+// Guard do painel do administrador: só entra quem passou pelo /admin-login.
+export const adminGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
+
+  // No servidor (SSR) não existe localStorage; a checagem real acontece no navegador.
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  try {
+    if (localStorage.getItem('aroma_admin_logado')) {
+      return true;
+    }
+  } catch {}
+
+  return router.createUrlTree(['/admin-login']);
 };
