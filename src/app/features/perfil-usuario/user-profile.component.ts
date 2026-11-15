@@ -7,11 +7,11 @@ import { AvatarViewComponent } from './avatar-view.component';
 import { AvatarService, ToastService } from './services';
 import { Stat, StatsBandComponent } from './stats-band.component';
 
-@Component({
+
+  @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [FormsModule, RouterLink, AvatarPickerComponent, AvatarViewComponent, StatsBandComponent],
-  imports: [ProfileHeroComponent, StatsBandComponent, AvatarPickerComponent],
+  imports: [ FormsModule, RouterLink, AvatarPickerComponent, AvatarViewComponent, StatsBandComponent],
   host: { class: 'profile-page view' },
   template: `
     <section class="card hero">

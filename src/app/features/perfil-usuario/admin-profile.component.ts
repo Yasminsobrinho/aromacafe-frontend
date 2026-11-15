@@ -16,8 +16,7 @@ interface DadosAdmin {
 @Component({
   selector: 'app-admin-profile',
   standalone: true,
-  imports: [FormsModule, RouterLink, StatsBandComponent, AvatarPickerComponent, AvatarViewComponent],
-  imports: [ProfileHeroComponent, StatsBandComponent, AvatarPickerComponent],
+  imports: [ FormsModule, RouterLink, StatsBandComponent, AvatarPickerComponent, AvatarViewComponent],
   host: { class: 'profile-page view' },
   template: `
     <section class="card hero">
